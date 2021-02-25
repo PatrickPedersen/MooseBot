@@ -1,0 +1,25 @@
+{
+    "owners": ["299192199843676171", "153994336193740800"],
+    "developers": ["299192199843676171","153994336193740800"],
+
+    "DB_NAME": "moosebot",
+    "DB_USER": "moosebot",
+    "DB_PASS": "root",
+    "DB_HOST": "localhost",
+    "DB_PORT": 3300,
+
+    "prefix": ".",
+    "botMainDiscordServer": "565959084990267393",
+
+    "embedColor": [200,0,0],
+
+    "creatorId": "299192199843676171",
+    "version": "0.1.0",
+    "library": "Discord.js",
+    "Creator": "[BWC] Patrick#8788",
+    "website": "https://the-bwc.com",
+    "discord": "https://discord.the-bwc.com",
+    "server_location": "New York, NY, USA",
+
+    "NODE_ENV": "development"
+}
