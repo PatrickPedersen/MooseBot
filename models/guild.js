@@ -20,6 +20,25 @@ const Guild = sequelize.define('guild', {
     log_channel: {
         type: Sequelize.STRING,
         allowNull: true
+    },
+    muterole: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    spam_time: {
+        type: Sequelize.INTEGER,
+        defaultValue: 3600000,
+        allowNull: false
+    },
+    badwords_time: {
+        type: Sequelize.INTEGER,
+        defaultValue: 3600000,
+        allowNull: false
+    },
+    dupmsg_time: {
+        type: Sequelize.INTEGER,
+        defaultValue: 3600000,
+        allowNull: false
     }
 });
 

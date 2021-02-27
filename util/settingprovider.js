@@ -9,13 +9,10 @@ const Locked_channel = require('../models/locked_channel');
 const Omit_channel_lock = require('../models/omit_channel_lock');
 const Omit_channel_lock_role = require('../models/omit_channel_lock_role');
 const Assignable_roles = require('../models/assignable_roles');
+const Badwords = require('../models/badword');
 
 // noinspection JSUnresolvedFunction
 class MooseBotSettingsProvider extends Commando.SettingProvider {
-    constructor(settings) {
-        super();
-    }
-
     async init(client) {
 
         Guild.hasMany(Warn);
@@ -24,6 +21,7 @@ class MooseBotSettingsProvider extends Commando.SettingProvider {
         Guild.hasMany(Omit_channel_lock);
         Guild.hasMany(Omit_channel_lock_role);
         Guild.hasMany(Assignable_roles);
+        Guild.hasOne(Badwords);
 
         //sequelize.sync({force: true}).catch(err => console.log(err))
         //sequelize.sync().catch(err => console.log(err))

@@ -63,8 +63,7 @@ const client = new CommandoClient({
 })
 
 /* Custom Client Properties */
-client.ready = false;
-client.settings = settings;
+//client.settings = settings;
 /* End Custom Client Properties */
 
 // Logger:
@@ -107,10 +106,9 @@ async function registerEvents(client, dir) {
 registerEvents(client, './events')
     .catch(e => client.logger.error(e.stack));
 
-
 client.login(process.env.BOT_TOKEN)
     .catch(err => client.logger.error(err))
-client.setProvider(new MooseBotSettingsProvider(settings))
+client.setProvider(new MooseBotSettingsProvider())
     .catch(err => client.logger.error(err));
 
 

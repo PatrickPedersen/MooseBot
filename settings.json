@@ -13,6 +13,16 @@
 
     "embedColor": [200,0,0],
 
+    "SPAM_LIMIT": 5,
+    "SPAM_TRACK_TIME": 10000,
+    "SPAM_TIME": 5000,
+    "SPAM_MUTE_TIME": 3600000,
+
+    "DUPMSG_LIMIT": 3,
+    "DUPMSG_TRACK_TIME": 20000,
+    "DUPMSG_TIME": 10000,
+    "DUPMSG_MUTE_TIME": 3600000,
+
     "creatorId": "299192199843676171",
     "version": "0.1.0",
     "library": "Discord.js",
