@@ -3,7 +3,18 @@ const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
 
 module.exports = async (client, member) => {
+
+    // Member Stats.
+    await client.provider.createMemberLeaveStat(member.guild.id, member.id, String(Date.now()))
+
+    let logChannel;
+
+    if (await client.provider.fetchGuild(member.guild.id, "log") === true) {
+        logChannel = await client.provider.fetchGuild(member.guild.id, "log_channel")
+    }
+
     if (!logChannel) return;
+
     if (await client.channels.cache.some(c => c.id === logChannel)) {
         const guildChannel = await client.channels.cache.find(c => c.id === logChannel);
         const role = member.roles.cache

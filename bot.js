@@ -130,8 +130,3 @@ client.registry
         unknownCommand: false
     })
     .registerCommandsIn(path.join(__dirname, 'commands'))
-
-
-
-
-

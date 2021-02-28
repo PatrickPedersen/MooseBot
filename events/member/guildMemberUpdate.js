@@ -1,9 +1,16 @@
-const { logChannel, embedColor } = require('../../settings.json');
+const { embedColor } = require('../../settings.json');
 const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
 
-module.exports = (client, oldMember, newMember) => {
+module.exports = async (client, oldMember, newMember) => {
+    let logChannel;
+
+    if (await client.provider.fetchGuild(newMember.guild.id, "log") === true) {
+        logChannel = await client.provider.fetchGuild(newMember.guild.id, "log_channel")
+    }
+
     if (!logChannel) return;
+
     if (client.channels.cache.some(c => c.id === logChannel)) {
         const guildChannel = client.channels.cache.find(c => c.id === logChannel);
 

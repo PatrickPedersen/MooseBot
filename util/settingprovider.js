@@ -1,6 +1,4 @@
 const Commando = require('discord.js-commando')
-const { Sequelize } = require('sequelize')
-const settings = require('../settings.json')
 const sequelize = require('./database');
 const Guild = require('../models/guild');
 const Warn = require('../models/warn');
@@ -10,6 +8,8 @@ const Omit_channel_lock = require('../models/omit_channel_lock');
 const Omit_channel_lock_role = require('../models/omit_channel_lock_role');
 const Assignable_roles = require('../models/assignable_roles');
 const Badwords = require('../models/badword');
+const Stat_member = require('../models/member');
+const Stat_message = require('../models/message');
 
 // noinspection JSUnresolvedFunction
 class MooseBotSettingsProvider extends Commando.SettingProvider {
@@ -21,6 +21,8 @@ class MooseBotSettingsProvider extends Commando.SettingProvider {
         Guild.hasMany(Omit_channel_lock);
         Guild.hasMany(Omit_channel_lock_role);
         Guild.hasMany(Assignable_roles);
+        Guild.hasMany(Stat_member);
+        Guild.hasMany(Stat_message);
         Guild.hasOne(Badwords);
 
         //sequelize.sync({force: true}).catch(err => console.log(err))
@@ -162,6 +164,27 @@ class MooseBotSettingsProvider extends Commando.SettingProvider {
             where: {guildId: guildId}
         }).catch(err => this.client.logger.error(err.stack))
     };
+
+    async createMessageStat(guildId, msgId, timestamp) {
+        await Guild.findByPk(guildId)
+            .then(guild => {
+                return guild.createStat_message({message_id: msgId, timestamp: timestamp})
+            }).catch(err => this.client.logger.error(err.stack))
+    }
+
+    async createMemberJoinStat(guildId, memId, joinTimestamp) {
+        await Guild.findByPk(guildId)
+            .then(guild => {
+                return guild.createStat_member({member_id: memId, join_timestamp: joinTimestamp})
+            }).catch(err => this.client.logger.error(err.stack))
+    }
+
+    async createMemberLeaveStat(guildId, memId, leaveTimestamp) {
+        await Guild.findByPk(guildId)
+            .then(guild => {
+                return guild.createStat_member({member_id: memId, leave_timestamp: leaveTimestamp})
+            }).catch(err => this.client.logger.error(err.stack))
+    }
 
 }
 

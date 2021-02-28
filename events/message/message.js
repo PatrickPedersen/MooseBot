@@ -8,7 +8,6 @@ const DUPMSG_usersMap = new Map();
 
 module.exports = async (client, message) => {
     if (message.author.bot) return;
-    console.log(message)
 
     //TODO Automod
     // - Spam - 5 messages in 5 seconds, give dunce cap for 60 minutes
@@ -21,7 +20,6 @@ module.exports = async (client, message) => {
         const { lastMessage, timer } = userData;
         const difference = message.createdTimestamp - lastMessage.createdTimestamp;
         let msgCount = userData.msgCount;
-        console.log(difference)
 
         if (difference > SPAM_TIME) {
             clearTimeout(timer);
@@ -72,7 +70,6 @@ module.exports = async (client, message) => {
     } else {
         let fn = setTimeout(() => {
             SPAM_usersMap.delete(message.author.id);
-            console.log('Removed from map.');
         }, SPAM_TRACK_TIME);
 
         SPAM_usersMap.set(message.author.id, {
@@ -105,7 +102,6 @@ module.exports = async (client, message) => {
             if (userData.messageObject.find(m => m.lastMessageContent.toLowerCase() === message.content.toLowerCase())) {
                 ++userData.messageObject.find(m => m.lastMessageContent.toLowerCase() === message.content.toLowerCase()).msgCount;
             } else {
-                console.log("here")
                 userData.messageObject.push({lastMessageContent: message.content.toLowerCase(), lastMessageTime: message.createdTimestamp, msgCount: 1})
             }
 
@@ -145,7 +141,6 @@ module.exports = async (client, message) => {
     } else {
         let fn = setTimeout(() => {
             DUPMSG_usersMap.delete(message.author.id);
-            console.log('Removed from map.');
         }, DUPMSG_TRACK_TIME);
 
         DUPMSG_usersMap.set(message.author.id, {
@@ -162,7 +157,7 @@ module.exports = async (client, message) => {
     // Coming at a later date.
 
 
-    //TODO ServerStats
-    // - messages in last day/week/month
-    // - members join & left in last day/week/month
+    // Message Stats.
+    await client.provider.createMessageStat(message.guild.id, message.id, message.createdTimestamp)
+
 }
