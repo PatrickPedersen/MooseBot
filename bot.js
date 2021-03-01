@@ -5,6 +5,7 @@ const path = require('path');
 const settings = require('./settings.json');
 const winston = require('winston');
 const MooseBotSettingsProvider = require('./util/settingprovider');
+const {ChartJSNodeCanvas} = require("chartjs-node-canvas");
 require('dotenv').config();
 
 const token = process.env.BOT_TOKEN;

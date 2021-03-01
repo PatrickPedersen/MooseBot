@@ -16,8 +16,6 @@ module.exports = async (client, oldMessage, newMessage) => {
         if (oldMessage.content === undefined || null) return;
         if (oldMessage.author.bot === true || null || undefined) return;
 
-        console.log("INSIDE!!")
-
         let embed = new MessageEmbed()
             .setColor(embedColor)
             .setAuthor(`${oldMessage.author.tag}`, oldMessage.author.displayAvatarURL({format: "png", dynamic: true, size: 128}))

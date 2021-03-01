@@ -9,11 +9,6 @@ const DUPMSG_usersMap = new Map();
 module.exports = async (client, message) => {
     if (message.author.bot) return;
 
-    //TODO Automod
-    // - Spam - 5 messages in 5 seconds, give dunce cap for 60 minutes
-    // - Bad Words - give automatic warning, dunce cap for 60 minutes
-    // - Duplicate Messages - 3 messages 10 seconds, give dunce cap for 60 minutes
-
     // Spam
     if (SPAM_usersMap.has(message.author.id)) {
         const userData = SPAM_usersMap.get(message.author.id);
@@ -152,6 +147,9 @@ module.exports = async (client, message) => {
             timer: fn
         });
     }
+
+    //TODO Automod
+    // - Bad Words - give automatic warning, dunce cap for 60 minutes
 
     // Bad Words
     // Coming at a later date.
