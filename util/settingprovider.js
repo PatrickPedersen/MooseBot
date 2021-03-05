@@ -1,4 +1,5 @@
 const Commando = require('discord.js-commando')
+const Sequelize = require('sequelize');
 const sequelize = require('./database');
 const Guild = require('../models/guild');
 const Warn = require('../models/warn');
@@ -170,6 +171,18 @@ class MooseBotSettingsProvider extends Commando.SettingProvider {
             .then(guild => {
                 return guild.createStat_message({message_id: msgId, timestamp: timestamp})
             }).catch(err => this.client.logger.error(err.stack))
+    }
+
+    // Fetches id, message_id, timestamp, guildId - Comes from the guild table
+    async fetchMessageStat(guildId, startTime) {
+        return Stat_message.findAll({
+            where: {
+                guildId: guildId,
+                timestamp: {
+                    [Sequelize.Op.gte]: startTime
+                }
+            }
+        }).catch(err => this.client.logger.error(err.stack))
     }
 
     async createMemberJoinStat(guildId, memId, joinTimestamp) {
