@@ -1,13 +1,16 @@
 const { CommandoClient } = require('discord.js-commando');
 const fs = require("fs").promises;
 const path = require('path');
-
 const settings = require('./settings.json');
 const winston = require('winston');
 const MooseBotSettingsProvider = require('./util/settingprovider');
-const {ChartJSNodeCanvas} = require("chartjs-node-canvas");
+const { collectDefaultMetrics } = require('prom-client');
+const register = require('prom-client').register
+const express = require('express');
+const server = express()
 require('dotenv').config();
 
+collectDefaultMetrics();
 const token = process.env.BOT_TOKEN;
 
 // Settings.json checks
@@ -106,6 +109,19 @@ async function registerEvents(client, dir) {
 }
 registerEvents(client, './events')
     .catch(e => client.logger.error(e.stack));
+
+server.get('/metrics', async (req, res) => {
+    try {
+        res.set('Content-Type', register.contentType);
+        res.end(await register.metrics());
+    } catch (er) {
+        res.status(500).end(er);
+    }
+})
+
+const port = process.env.PORT || 4001;
+console.log(`Server listening to ${port}, metrics exposed on /metrics endpoint`);
+server.listen(port)
 
 client.login(process.env.BOT_TOKEN)
     .catch(err => client.logger.error(err))

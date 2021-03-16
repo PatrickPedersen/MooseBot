@@ -5,7 +5,7 @@
     "DB_NAME": "moosebot",
     "DB_USER": "moosebot",
     "DB_PASS": "root",
-    "DB_HOST": "localhost",
+    "DB_HOST": "192.168.1.24",
     "DB_PORT": 3300,
 
     "prefix": ".",
@@ -24,7 +24,7 @@
     "DUPMSG_MUTE_TIME": 3600000,
 
     "creatorId": "299192199843676171",
-    "version": "0.1.0",
+    "version": "0.8.0",
     "library": "Discord.js",
     "Creator": "[BWC] Patrick#8788",
     "website": "https://the-bwc.com",
