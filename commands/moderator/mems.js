@@ -33,76 +33,122 @@ module.exports = class MemsCommand extends Command {
         // Split Arguments
         let argsArray = args.split(" ");
 
-        // Set startTime for query to DB
-        let startTime = Date.now() - ms(argsArray[0])
-
-        // Query DB for the specific Guild and the startTime
-        let result = await this.client.provider.fetchMessageStat(msg.guild.id, startTime)
-            .catch(err => this.client.logger.error(err.stack))
-
-        // Take the DB result and parse the timestamps to INT, change the object keys to y & x for Graph usage.
+        let arrayData, currentGroup;
         let resultChanged = []
-        for (let msg in result) {
-            let values = result[msg].dataValues
-            resultChanged.push({y: values.id, x: parseInt(values.timestamp)})
+
+        if (argsArray[0] === '1d') {
+            await querySetResult(Date.now() - ms(argsArray[0]), this.client)
+                .then(() => {
+                    currentGroup = 'forHour'
+                    arrayData = sortTimesForDay(resultChanged)
+                })
+        }
+        if (argsArray[0] === '1w') {
+            await querySetResult(Date.now() - ms(argsArray[0]), this.client)
+                .then(() => {
+                    currentGroup = 'byDay'
+                    arrayData = sortTimesforWeek(resultChanged)
+                })
+        }
+        if (argsArray[0] === '1m') {
+            await querySetResult(Date.now() - 2678400 * 1000, this.client)
+                .then(() => {
+                    currentGroup = 'byDay'
+                    arrayData = sortTimesForMonth(resultChanged)
+                })
+        }
+        if (argsArray[0] === '1y') {
+            await querySetResult(Date.now() - ms(argsArray[0]), this.client)
+                .then(() => {
+                    currentGroup = 'forMonth'
+                    arrayData = sortTimesPerMonths(resultChanged)
+                })
+
+        }
+
+        async function querySetResult(startTime, client) {
+            // Query DB for the specific Guild and the startTime
+            let result = await client.provider.fetchMessageStat(msg.guild.id, startTime)
+                .catch(err => client.logger.error(err.stack))
+
+            // Take the DB result and parse the timestamps to INT, change the object keys to y & x for Graph usage.
+            for (let msg in result) {
+                let values = result[msg].dataValues
+                resultChanged.push({y: values.id, x: parseInt(values.timestamp)})
+            }
         }
 
         // If data has been gathered for 1 day only. Split all messages into each hour.
-        function sortTimesPerHour(array) {
+        function sortTimesForDay(array) {
             let arrayReverse = array.reverse()
             let results = []
             let currentHour = +moment(Date.now()).startOf('hour')
 
             for (let i = 0; i < 25; i++) {
                 for (const msg in arrayReverse) {
+                    // If msg is greater than the currentDay time, push to array.
+                    // This takes all messages sent for the current day and sends the rest onto the next if statement.
                     if (i === 0 && arrayReverse[msg].x > currentHour) {
                         results.push(arrayReverse[msg])
                     }
+                    // If msg is less than currentDay (It wasn't sent today), check if message fits into the given day.
+                    // If it does, push to array. If not, continue onto the next message.
                     if (arrayReverse[msg].x < ((currentHour - 3600 * 1000 * (i + 1)) + 3600 * 1000) && arrayReverse[msg].x > (currentHour - 3600 * 1000 * (i + 1))) {
                         results.push(arrayReverse[msg])
                     }
                 }
+                // If no messages match the current time, insert empty msg with time marker.
                 results.push({y: null, x: (currentHour - (3600 * 1000) * i)})
             }
             return results.reverse()
         }
 
         // If data has been gathered for 1 week only. Split all messages into each day.
-        function sortTimesPerDays(array) {
+        function sortTimesforWeek(array) {
             let arrayReverse = array.reverse()
             let results = []
-            let currentHour = +moment(Date.now()).startOf('hour')
+            let currentDay = +moment(Date.now()).startOf('day')
 
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < 8; i++) {
                 for (const msg in arrayReverse) {
-                    if (i === 0 && arrayReverse[msg].x > currentHour) {
+                    // If msg is greater than the currentDay time, push to array.
+                    // This takes all messages sent for the current day and sends the rest onto the next if statement.
+                    if (i === 0 && arrayReverse[msg].x > currentDay) {
                         results.push(arrayReverse[msg])
                     }
-                    if (arrayReverse[msg].x < ((currentHour - 3600 * 1000 * (i + 1)) + 3600 * 1000) && arrayReverse[msg].x > (currentHour - 3600 * 1000 * (i + 1))) {
+                    // If msg is less than currentDay (It wasn't sent today), check if message fits into the given day.
+                    // If it does, push to array. If not, continue onto the next message.
+                    if (arrayReverse[msg].x < ((currentDay - 86400 * 1000 * (i + 1)) + 86400 * 1000) && arrayReverse[msg].x > (currentDay - 86400 * 1000 * (i + 1))) {
                         results.push(arrayReverse[msg])
                     }
                 }
-                results.push({y: null, x: (currentHour - (3600 * 1000) * i)})
+                // If no messages match the current time, insert empty msg with time marker.
+                results.push({y: null, x: (currentDay - (86400 * 1000) * i)})
             }
             return results.reverse()
         }
 
         // If data has been gathered for 1 month only. Split all messages into each week.
-        function sortTimesPerWeeks(array) {
+        function sortTimesForMonth(array) {
             let arrayReverse = array.reverse()
             let results = []
-            let currentHour = +moment(Date.now()).startOf('hour')
+            let currentDay = +moment(Date.now()).startOf('day')
 
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < 32; i++) {
                 for (const msg in arrayReverse) {
-                    if (i === 0 && arrayReverse[msg].x > currentHour) {
+                    // If msg is greater than the currentDay time, push to array.
+                    // This takes all messages sent for the current day and sends the rest onto the next if statement.
+                    if (i === 0 && arrayReverse[msg].x > currentDay) {
                         results.push(arrayReverse[msg])
                     }
-                    if (arrayReverse[msg].x < ((currentHour - 3600 * 1000 * (i + 1)) + 3600 * 1000) && arrayReverse[msg].x > (currentHour - 3600 * 1000 * (i + 1))) {
+                    // If msg is less than currentDay (It wasn't sent today), check if message fits into the given day.
+                    // If it does, push to array. If not, continue onto the next message.
+                    if (arrayReverse[msg].x < ((currentDay - 86400 * 1000 * (i + 1)) + 86400 * 1000) && arrayReverse[msg].x > (currentDay - 86400 * 1000 * (i + 1))) {
                         results.push(arrayReverse[msg])
                     }
                 }
-                results.push({y: null, x: (currentHour - (3600 * 1000) * i)})
+                // If no messages match the current time, insert empty msg with time marker.
+                results.push({y: null, x: (currentDay - (86400 * 1000) * i)})
             }
             return results.reverse()
         }
@@ -111,20 +157,25 @@ module.exports = class MemsCommand extends Command {
         function sortTimesPerMonths(array) {
             let arrayReverse = array.reverse()
             let results = []
-            let currentHour = +moment(Date.now()).startOf('hour')
+            let currentMonth = +moment(Date.now()).startOf('month')
 
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < 12; i++) {
                 for (const msg in arrayReverse) {
-                    if (i === 0 && arrayReverse[msg].x > currentHour) {
+                    // If msg is greater than the currentDay time, push to array.
+                    // This takes all messages sent for the current day and sends the rest onto the next if statement.
+                    if (i === 0 && arrayReverse[msg].x > currentMonth) {
                         results.push(arrayReverse[msg])
                     }
-                    if (arrayReverse[msg].x < ((currentHour - 3600 * 1000 * (i + 1)) + 3600 * 1000) && arrayReverse[msg].x > (currentHour - 3600 * 1000 * (i + 1))) {
+                    // If msg is less than currentDay (It wasn't sent today), check if message fits into the given day.
+                    // If it does, push to array. If not, continue onto the next message.
+                    if (arrayReverse[msg].x < ((currentMonth - 2678400 * 1000 * (i + 1)) + 2678400 * 1000) && arrayReverse[msg].x > (currentMonth - 2678400 * 1000 * (i + 1))) {
                         results.push(arrayReverse[msg])
                     }
                 }
-                results.push({y: null, x: (currentHour - (3600 * 1000) * i)})
+                // If no messages match the current time, insert empty msg with time marker.
+                results.push({y: null, x: (currentMonth - (2678400 * 1000) * i)})
             }
-            return results.reverse()
+            return results.sort((a, b) => b.x - a.x).reverse()
         }
 
         const groups = (() => {
@@ -144,22 +195,6 @@ module.exports = class MemsCommand extends Command {
                 forWeek,
             };
         })();
-
-        let arrayData, currentGroup;
-
-        if (argsArray[0] === '1d') {
-            currentGroup = 'forHour'
-            arrayData = sortTimesPerHour(resultChanged)
-        }
-        /*if (argsArray[0] === '1w') {
-            arrayData = sortTimesPerHour(resultChanged)
-        }
-        if (argsArray[0] === '1m') {
-            arrayData = sortTimesPerHour(resultChanged)
-        }
-        if (argsArray[0] === '1y') {
-            arrayData = sortTimesPerHour(resultChanged)
-        }*/
 
         let groupedData = _.groupBy(arrayData, groups[currentGroup])
         let keys = Object.keys(groupedData)

@@ -48,6 +48,5 @@
     "require-all": "^3.0.0",
     "sequelize": "^6.4.0",
     "winston": "^3.3.3"
-  },
-  "devDependencies": {}
+  }
 }
