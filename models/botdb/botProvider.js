@@ -1,20 +1,21 @@
 const Commando = require('discord.js-commando')
 const Sequelize = require('sequelize');
-const sequelize = require('./database');
-const Guild = require('../models/guild');
-const Warn = require('../models/warn');
-const Duncecap = require('../models/duncecap');
-const Locked_channel = require('../models/locked_channel');
-const Omit_channel_lock = require('../models/omit_channel_lock');
-const Omit_channel_lock_role = require('../models/omit_channel_lock_role');
-const Assignable_roles = require('../models/assignable_roles');
-const Badwords = require('../models/badword');
-const Stat_member = require('../models/member');
-const Stat_message = require('../models/message');
+const { bot } = require('../database');
+const Guild = require('./guild');
+const Warn = require('./warn');
+const Duncecap = require('./duncecap');
+const Locked_channel = require('./locked_channel');
+const Omit_channel_lock = require('./omit_channel_lock');
+const Omit_channel_lock_role = require('./omit_channel_lock_role');
+const Assignable_roles = require('./assignable_roles');
+const Badwords = require('./badword');
+const Stat_member = require('./member');
+const Stat_message = require('./message');
 
 // noinspection JSUnresolvedFunction
-class MooseBotSettingsProvider extends Commando.SettingProvider {
+class BotSettingsProvider extends Commando.SettingProvider {
     async init(client) {
+        this.client = client;
 
         Guild.hasMany(Warn);
         Guild.hasMany(Duncecap);
@@ -26,28 +27,28 @@ class MooseBotSettingsProvider extends Commando.SettingProvider {
         Guild.hasMany(Stat_message);
         Guild.hasOne(Badwords);
 
-        //sequelize.sync({force: true}).catch(err => console.log(err))
-        //sequelize.sync().catch(err => console.log(err))
+        //bot.sync({force: true}).catch(err => console.log(err))
+        //bot.sync().catch(err => console.log(err))
 
         try {
-            await sequelize.authenticate();
-            client.logger.info('Successfully connected to the DB');
+            await bot.authenticate();
+            this.client.logger.info('Successfully connected to the DB');
         } catch (e) {
-            client.logger.error(e.stack);
+            this.client.logger.error(e.stack);
             process.exit(-1);
         }
 
-        this.client = client;
-        for (const guild in client.guilds.cache.array()) {
+
+        for (const guild in this.client.guilds.cache.array()) {
             try {
-                const result = await Guild.findByPk(client.guilds.cache.array()[guild].id)
+                const result = await Guild.findByPk(this.client.guilds.cache.array()[guild].id)
 
                 if (!result) {
                     // Insert guild into guild table
-                    await Guild.create({id: client.guilds.cache.array()[guild].id})
+                    await Guild.create({id: this.client.guilds.cache.array()[guild].id})
                 }
             } catch (e) {
-                client.logger.error(e.stack);
+                this.client.logger.error(e.stack);
             }
         }
     }
@@ -201,4 +202,4 @@ class MooseBotSettingsProvider extends Commando.SettingProvider {
 
 }
 
-module.exports = MooseBotSettingsProvider;
+module.exports = BotSettingsProvider;

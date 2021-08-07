@@ -27,7 +27,7 @@ module.exports = class WarnsCommand extends Command {
     // noinspection JSCheckFunctionSignatures
     async run(msg, args) {
         const user = args.user;
-        const result = await msg.client.provider.fetchWarns(msg.guild.id, user.id)
+        const result = await msg.client.botProvider.fetchWarns(msg.guild.id, user.id)
             .catch(err => this.client.logger.error(err.stack))
 
         let warnings = [];

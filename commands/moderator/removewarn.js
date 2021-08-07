@@ -43,8 +43,8 @@ module.exports = class RemoveWarnCommand extends Command {
         if (!warningId) return msg.reply(`You have to provide a id for the warning you are trying to remove!`)
             .then(m => m.delete({timeout: 3000}));
 
-        const warning = await this.client.provider.fetchWarns(msg.guild.id, user.id, warningId[0])
-        await this.client.provider.removeWarning(msg.guild.id, warning)
+        const warning = await this.client.botProvider.fetchWarns(msg.guild.id, user.id, warningId[0])
+        await this.client.botProvider.removeWarning(msg.guild.id, warning)
             .catch(err => this.client.logger.error(err.stack))
 
         const warnUser = await msg.guild.members.fetch(await warning[0].user_id);
@@ -56,8 +56,8 @@ module.exports = class RemoveWarnCommand extends Command {
             .setTimestamp()
             .setDescription(`**Action**: Warning Removed! \n**User**: ${warnUser.user.tag} (${warnUser.user.id}) \n**Reason**: ${warning[0].reason}`)
 
-        if (await msg.client.provider.fetchGuild(msg.guild.id, 'log') === true) {
-            const log_channel = msg.client.channels.cache.get(await msg.client.provider.fetchGuild(msg.guild.id, 'log_channel'));
+        if (await msg.client.botProvider.fetchGuild(msg.guild.id, 'log') === true) {
+            const log_channel = msg.client.channels.cache.get(await msg.client.botProvider.fetchGuild(msg.guild.id, 'log_channel'));
             log_channel.send({ embed })
         }
 

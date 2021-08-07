@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const { bot } = require('../database');
 
-const Guild = sequelize.define('guild', {
+const Guild = bot.define('guild', {
     id: {
         type: Sequelize.STRING,
         allowNull: false,

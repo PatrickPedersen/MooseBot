@@ -20,7 +20,7 @@ module.exports = class RoleCallCommand extends Command {
     // noinspection JSCheckFunctionSignatures
     async run(msg) {
 
-    let roles = msg.guild.roles.cache.sort((a,b) => b.position - a.position).map(r => [r.name, r.members.size]);
+        let roles = msg.guild.roles.cache.sort((a,b) => b.position - a.position).map(r => [r.name, r.members.size]);
         const table = new Table({
             chars: { 'top': '', 'top-mid': '', 'top-left': '', 'top-right': '',
                 'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '',

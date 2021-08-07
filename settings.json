@@ -1,17 +1,14 @@
 {
-    "owners": ["299192199843676171", "153994336193740800"],
-    "developers": ["299192199843676171","153994336193740800"],
-
-    "DB_NAME": "moosebot",
-    "DB_USER": "moosebot",
-    "DB_PASS": "root",
-    "DB_HOST": "192.168.1.24",
-    "DB_PORT": 3300,
+    "owners": ["299192199843676171"],
+    "developers": ["299192199843676171"],
 
     "prefix": ".",
     "botMainDiscordServer": "565959084990267393",
 
     "embedColor": [200,0,0],
+
+    "omitLockdownChannels":  "789604909578190869",
+    "omitLockdownRoles": "",
 
     "SPAM_LIMIT": 5,
     "SPAM_TRACK_TIME": 10000,

@@ -108,7 +108,7 @@ module.exports = class DunceCommand extends Command {
         const roles = user.roles.cache.filter(r => r.id !== msg.guild.id)
 
         if (time) {
-            await this.client.provider.createDunce(msg.guild.id, user.id, JSON.stringify(roles, ['id']), time, reason ? reason : "No reason provided.");
+            await this.client.botProvider.createDunce(msg.guild.id, user.id, JSON.stringify(roles, ['id']), time, reason ? reason : "No reason provided.");
             await user.roles.set([muteRole]);
         }
 
@@ -121,8 +121,8 @@ module.exports = class DunceCommand extends Command {
             .setTimestamp()
             .setDescription(`**Action**: DunceCap \n**User**: ${usertag} (${user.id}) \n **Time**: ${time} \n**Reason**: ${reason ? reason : "No reason provided."}`)
 
-        if (await msg.client.provider.fetchGuild(msg.guild.id, 'log') === true) {
-            const log_channel = msg.client.channels.cache.get(await msg.client.provider.fetchGuild(msg.guild.id, 'log_channel'));
+        if (await msg.client.botProvider.fetchGuild(msg.guild.id, 'log') === true) {
+            const log_channel = msg.client.channels.cache.get(await msg.client.botProvider.fetchGuild(msg.guild.id, 'log_channel'));
             log_channel.send({ embed })
         }
 

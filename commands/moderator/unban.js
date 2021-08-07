@@ -45,8 +45,8 @@ module.exports = class UnbanCommand extends Command {
             .setTimestamp()
             .setDescription(`**Action**: Unbanned \n**User**: ${ban.user.username} ${ban.user.id} \n**Reason**: ${reason}`)
 
-        if (await msg.client.provider.fetchGuild(msg.guild.id, 'log') === true) {
-            const log_channel = msg.client.channels.cache.get(await msg.client.provider.fetchGuild(msg.guild.id, 'log_channel'));
+        if (await msg.client.botProvider.fetchGuild(msg.guild.id, 'log') === true) {
+            const log_channel = msg.client.channels.cache.get(await msg.client.botProvider.fetchGuild(msg.guild.id, 'log_channel'));
             log_channel.send({ embed })
         }
 

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const { bot } = require('../database');
 
-const Warn = sequelize.define('warn', {
+const Duncecap = bot.define('duncecap', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -12,14 +12,18 @@ const Warn = sequelize.define('warn', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    reason: {
+    user_roles: {
         type: Sequelize.STRING,
+        allowNull: true
+    },
+    time: {
+        type: Sequelize.INTEGER,
         allowNull: false
     },
-    mod_id: {
-        type: Sequelize.STRING,
+    reason: {
+        type: Sequelize.TEXT,
         allowNull: false
     }
 });
 
-module.exports = Warn;
+module.exports = Duncecap;

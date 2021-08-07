@@ -52,7 +52,7 @@ module.exports = class UnDunceCommand extends Command {
             return msg.channel.send(`**<@${user.id}> is not DunceCapped.**`)
                 .then(m => m.delete({timeout: 5000}))
 
-        const dunce = await this.client.provider.fetchDunceCaps(msg.guild.id, user.id);
+        const dunce = await this.client.botProvider.fetchDunceCaps(msg.guild.id, user.id);
         const dunceValues = dunce[0].dataValues;
         const dunceRoles = JSON.parse(dunceValues.user_roles)
 
@@ -70,7 +70,7 @@ module.exports = class UnDunceCommand extends Command {
                     .then(m => m.delete({timeout: 10000}))
             })
 
-        await this.client.provider.removeDuncecap(msg.guild.id, dunce)
+        await this.client.botProvider.removeDuncecap(msg.guild.id, dunce)
             .catch(err => this.client.logger.error(err.stack))
 
         const embed = new MessageEmbed()
@@ -80,8 +80,8 @@ module.exports = class UnDunceCommand extends Command {
             .setTimestamp()
             .setDescription(`**Action**: DunceCap Removed \n**User**: ${usertag} (${user.id})`)
 
-        if (await msg.client.provider.fetchGuild(msg.guild.id, 'log') === true) {
-            const log_channel = msg.client.channels.cache.get(await msg.client.provider.fetchGuild(msg.guild.id, 'log_channel'));
+        if (await msg.client.botProvider.fetchGuild(msg.guild.id, 'log') === true) {
+            const log_channel = msg.client.channels.cache.get(await msg.client.botProvider.fetchGuild(msg.guild.id, 'log_channel'));
             log_channel.send({ embed })
         }
 

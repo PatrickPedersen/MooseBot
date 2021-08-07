@@ -56,8 +56,8 @@ module.exports = class BanCommand extends Command {
         await msg.guild.members.ban(user, {reason: reason})
             .catch(err => this.client.logger.error(err.stack));
 
-        if (await msg.client.provider.fetchGuild(msg.guild.id, 'log') === true) {
-            const log_channel = msg.client.channels.cache.get(await msg.client.provider.fetchGuild(msg.guild.id, 'log_channel'));
+        if (await msg.client.botProvider.fetchGuild(msg.guild.id, 'log') === true) {
+            const log_channel = msg.client.channels.cache.get(await msg.client.botProvider.fetchGuild(msg.guild.id, 'log_channel'));
             log_channel.send({ embed })
         }
 

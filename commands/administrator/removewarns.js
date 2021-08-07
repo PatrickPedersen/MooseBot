@@ -39,7 +39,7 @@ module.exports = class RemoveWarnCommand extends Command {
         if (user === msg.author) return msg.channel.send(`You can't remove your own warnings!`)
             .then(m => m.delete({timeout: 3000}));
 
-        await this.client.provider.removeWarnings(msg.guild.id, user.id)
+        await this.client.botProvider.removeWarnings(msg.guild.id, user.id)
             .catch(err => this.client.logger.error(err.stack))
 
         const warnRemove = new MessageEmbed()

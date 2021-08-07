@@ -5,12 +5,12 @@ const moment = require('moment');
 module.exports = async (client, member) => {
 
     // Member Stats.
-    await client.provider.createMemberLeaveStat(member.guild.id, member.id, String(Date.now()))
+    await client.botProvider.createMemberLeaveStat(member.guild.id, member.id, String(Date.now()))
 
     let logChannel;
 
-    if (await client.provider.fetchGuild(member.guild.id, "log") === true) {
-        logChannel = await client.provider.fetchGuild(member.guild.id, "log_channel")
+    if (await client.botProvider.fetchGuild(member.guild.id, "log") === true) {
+        logChannel = await client.botProvider.fetchGuild(member.guild.id, "log_channel")
     }
 
     if (!logChannel) return;

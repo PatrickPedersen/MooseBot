@@ -1,4 +1,7 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js')
+const { embedColor } = require('../../settings.json')
+const moment = require('moment')
 const ms = require('ms');
 
 // noinspection JSUnresolvedFunction
@@ -21,6 +24,27 @@ module.exports = class ClearCommand extends Command {
         });
     }
 
+    async log(msg, amount) {
+        let logChannel;
+        if (await msg.client.botProvider.fetchGuild(msg.guild.id, "log") === true) {
+            logChannel = await msg.client.botProvider.fetchGuild(msg.guild.id, "log_channel")
+        }
+        if (!logChannel) return;
+        if (msg.client.channels.cache.some(c => c.id === logChannel)) {
+            const guildChannel = msg.client.channels.cache.find(c => c.id === logChannel);
+
+            let embed = new MessageEmbed()
+                .setColor(embedColor)
+                .setAuthor(`${msg.author.tag}`, msg.author.displayAvatarURL({format: "png", dynamic: true, size: 128}))
+                .setDescription(`**Batch Delete**`)
+                .addField(`Amount:`, amount, true)
+                .addField(`Deleted By:`, `<@${msg.author.id}>`, true)
+
+            embed.setFooter(`Author: ${msg.author.id} | Message ID: ${msg.id} • ${moment().format('[Today at] hh:mma')}`)
+            return guildChannel.send({ embed: embed, disableMentions: "all" })
+        }
+    }
+
     // noinspection JSCheckFunctionSignatures
     async run(msg, args) {
 
@@ -31,6 +55,7 @@ module.exports = class ClearCommand extends Command {
                 if (isNaN(parseInt(argsArray[1]))) return msg.channel.send('**Please supply a valid amount of message to purge**');
                 if (parseInt(argsArray[1]) > 100) return msg.channel.send('**Please supply a number less than 100**');
                 await msg.channel.bulkDelete(argsArray[1]).catch(err => this.client.logger.error(err.stack));
+                await this.log(msg, argsArray[1])
                 return msg.channel.send(`Messages Cleared`)
                     .then(m => m.delete({timeout: 5000}))
                     .catch(err => this.client.logger.error(err.stack))
@@ -85,6 +110,7 @@ module.exports = class ClearCommand extends Command {
                     }
                 }
 
+                await this.log(msg, messagesDeletedTotal)
                 return msg.channel.send(`**${messagesDeletedTotal} Messages have been deleted**`)
                     .then(m => m.delete({timeout: 5000}))
                     .catch(err => this.client.logger.error(err.stack))

@@ -1,29 +1,25 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const { bot } = require('../database');
 
-const Duncecap = sequelize.define('duncecap', {
+const Stat_member = bot.define('stat_member', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    user_id: {
+    member_id: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    user_roles: {
+    join_timestamp: {
         type: Sequelize.STRING,
         allowNull: true
     },
-    time: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    reason: {
-        type: Sequelize.TEXT,
-        allowNull: false
+    leave_timestamp: {
+        type: Sequelize.STRING,
+        allowNull: true
     }
 });
 
-module.exports = Duncecap;
+module.exports = Stat_member;

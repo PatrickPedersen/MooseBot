@@ -1,54 +1,52 @@
-const { CommandoClient } = require('discord.js-commando');
-const fs = require("fs").promises;
-const path = require('path');
-const settings = require('./settings.json');
-const winston = require('winston');
-const MooseBotSettingsProvider = require('./util/settingprovider');
-const { collectDefaultMetrics } = require('prom-client');
+const { CommandoClient } = require('discord.js-commando')
+const fs = require("fs").promises
+const path = require('path')
+const settings = require('./settings.json')
+const winston = require('winston')
+const BotSettingsProvider = require('./models/botdb/botProvider')
+const XenforoSettingsProvider = require('./models/xenforo/xenProvider')
+const { collectDefaultMetrics } = require('prom-client')
 const register = require('prom-client').register
-const express = require('express');
+const express = require('express')
 const server = express()
-require('dotenv').config();
+require('dotenv').config()
 
-collectDefaultMetrics();
-const token = process.env.BOT_TOKEN;
-
-// Settings.json checks
-if (!settings.owners.length){
-    console.log('You have to enter at least one owner in the settings.json');
-    process.exit(42);
-}
+collectDefaultMetrics()
+const token = process.env.BOT_TOKEN
 
 if (!token){
-    console.log('You forgot to enter your Discord super secret token! You can get this token from the following page: https://discordapp.com/developers/applications/');
-    process.exit(42);
+    console.log('You forgot to enter your Discord super secret token! You can get this token from the following page: https://discordapp.com/developers/applications/')
+    process.exit(42)
 }
-
+if (!settings.owners.length){
+    console.log('You have to enter at least one owner in the settings.json')
+    process.exit(42)
+}
 if (!settings.prefix){
-    console.log('You can\'t start the bot without setting a standard prefix');
-    process.exit(42);
+    console.log('You can\'t start the bot without setting a standard prefix')
+    process.exit(42)
 }
-
 // Coming later for Opserv verification, Or, that depends
 /*if (!settings.keychannel){
     console.log('You have to set the channel in which premium keys are sent');
     process.exit(42);
 }*/
-
 // Coming later for website statistics
 /*if (!settings.websiteport || isNaN(settings.websiteport)){
     console.log('You have to set a port for the website to listen to.');
     process.exit(42);
 }*/
-
-if (!settings.DB_NAME || !settings.DB_USER || !settings.DB_PASS || !settings.DB_HOST || !settings.DB_PORT){
-    console.log('You need to enter your db (database) credentials before starting the bot.');
-    process.exit(42);
+if (!process.env.DB_NAME1 || !process.env.DB_USER1 || !process.env.DB_PASS1 || !process.env.DB_HOST1 || !process.env.DB_PORT1){
+    console.log('[DB1] You need to enter your database credentials before starting the bot.')
+    process.exit(42)
 }
-
+if (!process.env.DB_NAME2 || !process.env.DB_USER2 || !process.env.DB_PASS2 || !process.env.DB_HOST2 || !process.env.DB_PORT2){
+    console.log('[DB2] You need to enter your database credentials before starting the bot.')
+    process.exit(42)
+}
 if (!settings.botMainDiscordServer){
-    console.log('You have to set the main Discord server id');
-    process.exit(42);
+    console.log('You have to set the main Discord server id')
+    process.exit(42)
 }
 
 const client = new CommandoClient({
@@ -80,54 +78,53 @@ client.logger = winston.createLogger({
 
 if (settings.NODE_ENV !== 'production') {
     client.logger.add(new winston.transports.Console({
-        format: winston.format.simple(),
+        format: winston.format.simple()
     }));
 }
 
 async function registerEvents(client, dir) {
-    let files = await fs.readdir(path.join(__dirname, dir));
+    let files = await fs.readdir(path.join(__dirname, dir))
     // Loop through each file.
     for(let file of files) {
-        let stat = await fs.lstat(path.join(__dirname, dir, file));
+        let stat = await fs.lstat(path.join(__dirname, dir, file))
         if(stat.isDirectory()) // If file is a directory, recursive call recurDir
-            await registerEvents(client, path.join(dir, file));
+            await registerEvents(client, path.join(dir, file))
         else {
             // Check if file is a .js file.
             if(file.endsWith(".js")) {
-                let eventName = file.substring(0, file.indexOf(".js"));
+                let eventName = file.substring(0, file.indexOf(".js"))
                 try {
-                    let eventModule = require(path.join(__dirname, dir, file));
-                    client.on(eventName, eventModule.bind(null, client));
-                    client.logger.info('Event loaded: ' + eventName);
+                    let eventModule = require(path.join(__dirname, dir, file))
+                    client.on(eventName, eventModule.bind(null, client))
+                    client.logger.info('Event loaded: ' + eventName)
                 }
                 catch(err) {
-                    client.logger.error(err.stack);
+                    client.logger.error(err.stack)
                 }
             }
         }
     }
 }
 registerEvents(client, './events')
-    .catch(e => client.logger.error(e.stack));
+    .catch(e => client.logger.error(e.stack))
 
 server.get('/metrics', async (req, res) => {
     try {
-        res.set('Content-Type', register.contentType);
-        res.end(await register.metrics());
+        res.set('Content-Type', register.contentType)
+        res.end(await register.metrics())
     } catch (er) {
-        res.status(500).end(er);
+        res.status(500).end(er)
     }
 })
 
-const port = process.env.PORT || 4001;
-console.log(`Server listening to ${port}, metrics exposed on /metrics endpoint`);
+const port = process.env.PORT || 4001
+console.log(`Server listening to ${port}, metrics exposed on /metrics endpoint`)
 server.listen(port)
 
 client.login(process.env.BOT_TOKEN)
     .catch(err => client.logger.error(err))
-client.setProvider(new MooseBotSettingsProvider())
-    .catch(err => client.logger.error(err));
-
+client.botProvider = new BotSettingsProvider()
+client.xenProvider = new XenforoSettingsProvider()
 
 client.registry
     .registerDefaultTypes()

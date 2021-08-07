@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const { bot } = require('../database');
 
-const Assignable_roles = sequelize.define('Assignable_roles', {
+const Omit_channel_lock_role = bot.define('omit_channel_lock_role', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -14,4 +14,4 @@ const Assignable_roles = sequelize.define('Assignable_roles', {
     }
 });
 
-module.exports = Assignable_roles;
+module.exports = Omit_channel_lock_role;

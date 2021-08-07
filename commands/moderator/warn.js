@@ -42,7 +42,7 @@ module.exports = class WarnCommand extends Command {
         if (!reason) return msg.reply(`You have to provide a reason for the warning!`)
             .then(m => m.delete({timeout: 3000}));
 
-        await msg.client.provider.createWarning(msg.guild.id, user.id, reason, msg.author.id)
+        await msg.client.botProvider.createWarning(msg.guild.id, user.id, reason, msg.author.id)
             .catch(err => this.client.logger.error(err.stack))
 
         const embed = new MessageEmbed()
@@ -55,8 +55,8 @@ module.exports = class WarnCommand extends Command {
         await user.send({ embed })
             .catch(err => this.client.logger.error(err.stack))
 
-        if (await msg.client.provider.fetchGuild(msg.guild.id, 'log') === true) {
-            const log_channel = msg.client.channels.cache.get(await msg.client.provider.fetchGuild(msg.guild.id, 'log_channel'));
+        if (await msg.client.botProvider.fetchGuild(msg.guild.id, 'log') === true) {
+            const log_channel = msg.client.channels.cache.get(await msg.client.botProvider.fetchGuild(msg.guild.id, 'log_channel'));
             log_channel.send({ embed })
         }
 

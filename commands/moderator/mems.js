@@ -68,7 +68,7 @@ module.exports = class MemsCommand extends Command {
 
         async function querySetResult(startTime, client) {
             // Query DB for the specific Guild and the startTime
-            let result = await client.provider.fetchMessageStat(msg.guild.id, startTime)
+            let result = await client.botProvider.fetchMessageStat(msg.guild.id, startTime)
                 .catch(err => client.logger.error(err.stack))
 
             // Take the DB result and parse the timestamps to INT, change the object keys to y & x for Graph usage.
@@ -93,7 +93,8 @@ module.exports = class MemsCommand extends Command {
                     }
                     // If msg is less than currentDay (It wasn't sent today), check if message fits into the given day.
                     // If it does, push to array. If not, continue onto the next message.
-                    if (arrayReverse[msg].x < ((currentHour - 3600 * 1000 * (i + 1)) + 3600 * 1000) && arrayReverse[msg].x > (currentHour - 3600 * 1000 * (i + 1))) {
+                    if (arrayReverse[msg].x < ((currentHour - 3600 * 1000 * (i + 1)) + 3600 * 1000) &&
+                        arrayReverse[msg].x > (currentHour - 3600 * 1000 * (i + 1))) {
                         results.push(arrayReverse[msg])
                     }
                 }

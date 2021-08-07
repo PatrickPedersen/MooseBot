@@ -1,25 +1,25 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const { bot } = require('../database');
 
-const Stat_member = sequelize.define('stat_member', {
+const Locked_channel = bot.define('locked_channel', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    member_id: {
+    channel_id: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    join_timestamp: {
-        type: Sequelize.STRING,
-        allowNull: true
+    reason: {
+        type: Sequelize.TEXT,
+        allowNull: false
     },
-    leave_timestamp: {
+    message_id: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: false
     }
 });
 
-module.exports = Stat_member;
+module.exports = Locked_channel;

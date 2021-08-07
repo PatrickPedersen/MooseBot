@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const { bot } = require('../database');
 
-const Badwords = sequelize.define('badword', {
+const Badwords = bot.define('badword', {
     id: {
         type: Sequelize.STRING,
         allowNull: false,

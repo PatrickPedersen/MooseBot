@@ -1,21 +1,17 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const { bot } = require('../database');
 
-const Stat_message = sequelize.define('stat_message', {
+const Assignable_roles = bot.define('Assignable_roles', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    message_id: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    timestamp: {
+    role_id: {
         type: Sequelize.STRING,
         allowNull: false
     }
 });
 
-module.exports = Stat_message;
+module.exports = Assignable_roles;

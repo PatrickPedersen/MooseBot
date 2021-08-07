@@ -31,14 +31,14 @@ module.exports = async (client, message) => {
 
             if (parseInt(msgCount) === SPAM_LIMIT) {
 
-                const muterole = await client.provider.fetchGuild(message.guild.id, "muterole")
+                const muterole = await client.botProvider.fetchGuild(message.guild.id, "muterole")
                 const role = message.guild.roles.cache.get(muterole)
                 message.member.roles.add(role)
                     .catch(err => client.logger.error(err.stack));
                 message.channel.send(`${message.author.tag} have been muted for ${ms(SPAM_MUTE_TIME, { long: true })}. Due to Spamming`)
                     .then(async () => {
-                        if (await client.provider.fetchGuild(message.guild.id, 'log') === true) {
-                            const log_channel = message.client.channels.cache.get(await message.client.provider.fetchGuild(message.guild.id, 'log_channel'));
+                        if (await client.botProvider.fetchGuild(message.guild.id, 'log') === true) {
+                            const log_channel = message.client.channels.cache.get(await message.client.botProvider.fetchGuild(message.guild.id, 'log_channel'));
                             const embed = new MessageEmbed()
                                 .setAuthor(`DunceCapped by ${client.user.username}`, client.user.displayAvatarURL())
                                 .setThumbnail(message.author.displayAvatarURL())
@@ -102,14 +102,14 @@ module.exports = async (client, message) => {
 
             if (userData.messageObject.find(m => m.msgCount === DUPMSG_LIMIT)) {
                 // noinspection SpellCheckingInspection
-                const muterole = await client.provider.fetchGuild(message.guild.id, "muterole")
+                const muterole = await client.botProvider.fetchGuild(message.guild.id, "muterole")
                 const role = message.guild.roles.cache.get(muterole)
                 message.member.roles.add(role)
                     .catch(err => client.logger.error(err.stack));
                 message.channel.send(`${message.author.tag} have been muted for ${ms(DUPMSG_MUTE_TIME, { long: true })}. Due to Duplicate Message Spam`)
                     .then(async () => {
-                        if (await client.provider.fetchGuild(message.guild.id, 'log') === true) {
-                            const log_channel = message.client.channels.cache.get(await message.client.provider.fetchGuild(message.guild.id, 'log_channel'));
+                        if (await client.botProvider.fetchGuild(message.guild.id, 'log') === true) {
+                            const log_channel = message.client.channels.cache.get(await message.client.botProvider.fetchGuild(message.guild.id, 'log_channel'));
                             const embed = new MessageEmbed()
                                 .setAuthor(`DunceCapped by ${client.user.username}`, client.user.displayAvatarURL())
                                 .setThumbnail(message.author.displayAvatarURL())
@@ -156,6 +156,6 @@ module.exports = async (client, message) => {
 
 
     // Message Stats.
-    await client.provider.createMessageStat(message.guild.id, message.id, message.createdTimestamp)
+    await client.botProvider.createMessageStat(message.guild.id, message.id, message.createdTimestamp)
 
 }

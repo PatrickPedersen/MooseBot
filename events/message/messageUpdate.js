@@ -5,8 +5,8 @@ const moment = require('moment');
 module.exports = async (client, oldMessage, newMessage) => {
     let logChannel;
 
-    if (await client.provider.fetchGuild(newMessage.guild.id, "log") === true) {
-        logChannel = await client.provider.fetchGuild(newMessage.guild.id, "log_channel")
+    if (await client.botProvider.fetchGuild(newMessage.guild.id, "log") === true) {
+        logChannel = await client.botProvider.fetchGuild(newMessage.guild.id, "log_channel")
     }
 
     if (!logChannel) return;
@@ -25,7 +25,7 @@ module.exports = async (client, oldMessage, newMessage) => {
 
         embed.setFooter(`User ID: ${oldMessage.author.id} • ${moment().format('[Today at] hh:mma')}`)
         guildChannel.send({ embed: embed, disableMentions: "all"})
-
+        return;
     }
     client.logger.info(`Could not find the specified log channel. Please check that the right id is in the config file`)
 }
